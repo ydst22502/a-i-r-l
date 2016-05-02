@@ -93,13 +93,12 @@ class QLearningAgent(ReinforcementAgent):
         return maxAction
         """
         candidates = []
-        qValueAndActions = sorted([(self.getQValue(state, action), action) for action in self.getLegalActions(state)], key = lambda item: item[0], reverse = True)
-        maxQValue = qValueAndActions[0][0]
+        qValueAndActions = [(self.getQValue(state, action), action) for action in self.getLegalActions(state)]
+        maxQValue = max([self.getQValue(state, action) for action in self.getLegalActions(state)])
         for qValue, action in qValueAndActions:
             if qValue == maxQValue:
                 candidates.append(action)
-            else:
-                break
+ 
         action = random.choice(candidates)
         return action
 
@@ -140,7 +139,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         sample = reward + self.discount * self.computeValueFromQValues(nextState)
-        self.q[state, action] = (1 - self.alpha)*self.getQValue(state, action) + self.alpha*sample
+        self.q[state, action] = (1 - self.alpha) * self.getQValue(state, action) + self.alpha * sample
 
 
     def getPolicy(self, state):
@@ -204,14 +203,24 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        featureVector = self.featExtractor.getFeatures(state, action)
+        q = 0
+        for feature in featureVector.keys():
+            q += self.weights[feature] * featureVector[feature]
+        return q
+
+        #util.raiseNotDefined()
 
     def update(self, state, action, nextState, reward):
         """
            Should update your weights based on transition
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        difference = reward + self.discount * self.computeValueFromQValues(nextState) - self.getQValue(state, action)
+        featureVector = self.featExtractor.getFeatures(state, action)
+        for feature in featureVector.keys():
+            self.weights[feature] = self.weights[feature] + self.alpha * difference * featureVector[feature]
+        #util.raiseNotDefined()
 
     def final(self, state):
         "Called at the end of each game."
