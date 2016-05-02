@@ -56,7 +56,7 @@ class ValueIterationAgent(ValueEstimationAgent):
                 for action in possibleActions:
                     sigma = 0
                     for transitionState, prob in mdp.getTransitionStatesAndProbs(state, action):
-                        sigma += prob * (mdp.getReward(state, action, transitionState) + discount * self.values[transitionState])
+                        sigma += prob * (mdp.getReward(state, action, transitionState) + discount * self.getValue(transitionState))
                     if sigma > maxAction:
                         maxAction = sigma
                 tempValues[state] = maxAction
@@ -78,7 +78,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         "*** YOUR CODE HERE ***"
         sigma = 0
         for transitionState, prob in self.mdp.getTransitionStatesAndProbs(state, action):
-            sigma  += prob * (self.mdp.getReward(state, action, transitionState) + self.discount * self.values[transitionState])
+            sigma  += prob * (self.mdp.getReward(state, action, transitionState) + self.discount * self.getValue(transitionState))
         return sigma
 
         #util.raiseNotDefined()
